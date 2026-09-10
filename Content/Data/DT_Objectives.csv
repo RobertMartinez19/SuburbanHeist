@@ -1,0 +1,7 @@
+Name,Category,InteractionType,MinValue,MaxValue,InteractionDurationSeconds,NoiseOnComplete,NoisePerSecondWhileInteracting
+Common_Valuable,ValuableObject,HoldToComplete,100,300,3.0,10,0
+Uncommon_Cache,HiddenCache,HoldToComplete,300,700,4.0,15,0
+Uncommon_Electronics,ElectronicsObjective,QuickTimeEvent,300,700,3.0,20,0
+Rare_Safe,SafeObjective,HoldToComplete,700,1500,6.0,25,5
+Collectible_Small,Collectible,HoldToComplete,50,150,1.5,5,0
+HighRisk_Bonus,BonusObjective,HoldToComplete,1500,3000,8.0,35,8

@@ -1,0 +1,5 @@
+Name,Archetype,SightRadius,SightHalfAngleDegrees,HearingRadius,HearingNoiseThreshold,InvestigateThreshold,DetectionThreshold,SuspicionDecayPerSecond,WalkSpeed,InvestigateSpeed,ChaseSpeed,MaxChaseDurationSeconds,bCanAttack
+Calm,Calm,1000,50,1200,35,50,90,8,200,300,450,15,false
+Alert,Alert,1400,70,1600,20,30,70,4,280,400,600,25,true
+Sensitive,Sensitive,1100,55,1800,12,25,75,3,240,360,520,20,true
+Patrol,Patrol,1300,90,1400,28,40,80,6,260,380,560,22,true

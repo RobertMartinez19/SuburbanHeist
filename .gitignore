@@ -1,0 +1,20 @@
+# Unreal Engine generated/build directories - never checked in.
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Per-user editor config
+Config/DefaultEditorPerProjectUserSettings.ini
+
+# OS junk
+.DS_Store
+Thumbs.db
