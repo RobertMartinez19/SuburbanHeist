@@ -10,6 +10,7 @@
 | Per-resident AI state/suspicion  | `ASHResidentCharacter::CurrentState` / `SuspicionLevel` | `Replicated`, server-only write via `Server_SetState`/`Server_AddSuspicion` |
 | Objective completion/value       | `ASHObjectivePoint::bCompleted` / `RolledValue` | `Replicated`, server-only write in `Interact_Implementation` |
 | Player stamina                   | `USHStaminaComponent::CurrentStamina` | `Replicated`, server-only Tick |
+| Player health / stagger          | `USHHealthComponent::CurrentHealth` / `bIsStaggered` | `Replicated`, server-only via `OnTakeAnyDamage` (fed by `ASHResidentCharacter::Server_PerformChaseAttack`'s `UGameplayStatics::ApplyDamage`) |
 | Player "currently detected" flag | `ASHPlayerState::bIsCurrentlyDetected` | `Replicated`, set by `ASHTeamDetectionManager::Server_ReportDetection` |
 
 **Every** `Interact`, `AddSuspicion`, `SetState`, `AwardMoney`, `ReportDetection`, and

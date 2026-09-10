@@ -38,7 +38,7 @@ public:
 	void Server_ResetAll();
 
 	UFUNCTION(BlueprintPure, Category = "Detection")
-	int32 GetUniqueResidentsDetectedCount() const { return DetectedResidents.Num(); }
+	int32 GetUniqueResidentsDetectedCount() const { return DetectedResidents.Num() + DebugForcedDetections; }
 
 	/** Section 24 TriggerDetection - bumps the shared counter without a real resident. */
 	void Debug_ForceDetection();
@@ -46,6 +46,10 @@ public:
 private:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AActor>> DetectedResidents;
+
+	/** Debug-only additions from Debug_ForceDetection, kept separate from the real per-resident
+	 *  dedup set above (there's no real resident to hold a weak pointer to). */
+	int32 DebugForcedDetections = 0;
 
 	void PushCountToGameState();
 };

@@ -43,8 +43,14 @@ Bind `OnGamePhaseChanged`:
   per Section 4's exact beat)
 
 Each of these three widgets is a simple full-screen `WBP_*` with a headline text, the final
-team cash total, and a "Return to Lobby"/"Play Again" button wired to your session-restart
-flow (Section 31 acceptance test #18 "complete another match").
+team cash total, and a "Play Again" button. Wire that button to
+**Get Owning Player Controller → cast to `ASHPlayerController` → `Server_RequestRestartMatch`**
+(Section 31 acceptance test #18 "complete another match") - not to `ASHGameMode` directly.
+`AGameMode` only exists on the server, so a client's Blueprint graph has no valid GameMode
+reference to call into; `Server_RequestRestartMatch` is a Server RPC on the one framework
+class guaranteed to exist and route calls correctly on every client, which then calls
+`ASHGameMode::Server_RestartMatch()` server-side (resets money/detection/objectives/residents
+and starts a fresh countdown).
 
 ## Client-side stinger/music hookup (Section 21)
 Bind `OnGamePhaseChanged` (every client receives this via `ASHGameState::OnRep_GamePhase`) to

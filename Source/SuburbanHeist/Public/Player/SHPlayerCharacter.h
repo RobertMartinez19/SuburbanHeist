@@ -9,6 +9,7 @@ class UCameraComponent;
 class USHStaminaComponent;
 class USHInteractionComponent;
 class USHMicrophoneNoiseComponent;
+class USHHealthComponent;
 class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
@@ -38,6 +39,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USHMicrophoneNoiseComponent> MicrophoneComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USHHealthComponent> HealthComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;

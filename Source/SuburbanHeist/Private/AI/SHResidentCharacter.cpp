@@ -22,6 +22,24 @@ void ASHResidentCharacter::BeginPlay()
 	}
 }
 
+namespace
+{
+	// UEnum::GetValueAsString's exact output ("EResidentArchetype::Calm" vs just "Calm") has
+	// varied across engine versions/metadata, so don't assume a fixed prefix length - just
+	// take whatever follows the last "::" if present, and the whole string otherwise. This is
+	// what makes row names in DT_ResidentArchetypes.csv ("Calm", "Alert", ...) resolve reliably.
+	FName GetShortEnumValueName(EResidentArchetype Value)
+	{
+		const FString Full = UEnum::GetValueAsString(Value);
+		int32 ColonIndex = INDEX_NONE;
+		if (Full.FindLastChar(TEXT(':'), ColonIndex))
+		{
+			return FName(*Full.Mid(ColonIndex + 1));
+		}
+		return FName(*Full);
+	}
+}
+
 void ASHResidentCharacter::LoadTuning()
 {
 	if (!ArchetypeDataTable)
@@ -32,7 +50,7 @@ void ASHResidentCharacter::LoadTuning()
 	FName RowName = ArchetypeRowNameOverride;
 	if (RowName.IsNone())
 	{
-		RowName = FName(*UEnum::GetValueAsString(Archetype).RightChop(FString(TEXT("EResidentArchetype::")).Len()));
+		RowName = GetShortEnumValueName(Archetype);
 	}
 
 	static const FString Context(TEXT("ASHResidentCharacter::LoadTuning"));
@@ -192,6 +210,30 @@ void ASHResidentCharacter::ApplyMovementSpeedForState(EResidentState State)
 		default:
 			GetCharacterMovement()->MaxWalkSpeed = Tuning.WalkSpeed;
 			break;
+	}
+}
+
+void ASHResidentCharacter::Server_ResetForRematch()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SuspicionLevel = 0.f;
+	TargetActor = nullptr;
+	LastHeardLocation = FVector::ZeroVector;
+	ChaseElapsedSeconds = 0.f;
+	LastAttackWorldTime = -1000.f;
+
+	CurrentState = EResidentState::Idle;
+	OnRep_CurrentState();
+	ApplyMovementSpeedForState(EResidentState::Idle);
+
+	SetActorLocation(HomeLocation);
+	if (Controller)
+	{
+		Controller->StopMovement();
 	}
 }
 

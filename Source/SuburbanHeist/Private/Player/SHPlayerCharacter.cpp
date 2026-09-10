@@ -2,6 +2,7 @@
 #include "Player/SHStaminaComponent.h"
 #include "Player/SHInteractionComponent.h"
 #include "Player/SHMicrophoneNoiseComponent.h"
+#include "Player/SHHealthComponent.h"
 #include "Gameplay/SHNoiseManager.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -30,6 +31,7 @@ ASHPlayerCharacter::ASHPlayerCharacter()
 	StaminaComponent = CreateDefaultSubobject<USHStaminaComponent>(TEXT("StaminaComponent"));
 	InteractionComponent = CreateDefaultSubobject<USHInteractionComponent>(TEXT("InteractionComponent"));
 	MicrophoneComponent = CreateDefaultSubobject<USHMicrophoneNoiseComponent>(TEXT("MicrophoneComponent"));
+	HealthComponent = CreateDefaultSubobject<USHHealthComponent>(TEXT("HealthComponent"));
 }
 
 void ASHPlayerCharacter::BeginPlay()
@@ -97,12 +99,20 @@ void ASHPlayerCharacter::HandleLook(const FInputActionValue& Value)
 
 void ASHPlayerCharacter::HandleJumpStarted()
 {
+	if (HealthComponent && HealthComponent->IsStaggered())
+	{
+		return;
+	}
 	Jump();
 	Server_EmitNoise(ENoiseSourceType::Jump, JumpNoise);
 }
 
 void ASHPlayerCharacter::HandleSprintStarted()
 {
+	if (HealthComponent && HealthComponent->IsStaggered())
+	{
+		return;
+	}
 	if (StaminaComponent && StaminaComponent->CanSprint())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -131,6 +141,10 @@ void ASHPlayerCharacter::HandleCrouchStopped()
 
 void ASHPlayerCharacter::HandleInteract()
 {
+	if (HealthComponent && HealthComponent->IsStaggered())
+	{
+		return;
+	}
 	if (InteractionComponent)
 	{
 		InteractionComponent->BeginInteract();

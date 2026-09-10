@@ -13,7 +13,11 @@
 USHMicrophoneNoiseComponent::USHMicrophoneNoiseComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicatedByDefault(false);
+	// Must be true, not false: Server_ReportVoiceNoise is an RPC, and a UActorComponent needs
+	// bReplicates=true to be registered as a replicated subobject at all - otherwise the RPC
+	// silently never reaches the server. (This component has no replicated *properties*, only
+	// this one RPC, but the flag is still required.)
+	SetIsReplicatedByDefault(true);
 
 	AudioCapture = CreateDefaultSubobject<UAudioCaptureComponent>(TEXT("AudioCapture"));
 	AudioCapture->bAutoActivate = false;

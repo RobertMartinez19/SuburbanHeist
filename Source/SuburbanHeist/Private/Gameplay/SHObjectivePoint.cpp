@@ -166,3 +166,20 @@ void ASHObjectivePoint::Debug_ForceComplete()
 {
 	Interact_Implementation(nullptr);
 }
+
+void ASHObjectivePoint::Server_ResetForRematch()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bCompleted = false;
+	OnRep_Completed();
+
+	FSHObjectiveDataRow Row;
+	if (GetTuning(Row))
+	{
+		RolledValue = FMath::RandRange(Row.MinValue, Row.MaxValue);
+	}
+}

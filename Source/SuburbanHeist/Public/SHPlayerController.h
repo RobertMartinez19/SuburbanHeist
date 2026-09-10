@@ -24,6 +24,13 @@ public:
 	UFUNCTION(Client, Reliable, Category = "UI")
 	void Client_NotifyResidentDetected();
 
+	/** WBP_Victory/WBP_Defeat/WBP_PoliceGameOver's "Play Again" button calls this (Docs/UI_SPEC.md)
+	 *  rather than reaching for ASHGameMode directly - AGameMode only exists on the server, so a
+	 *  client Blueprint has no valid GameMode reference to call into; PlayerController is the
+	 *  one framework class guaranteed to exist and route RPCs on both ends. */
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Match")
+	void Server_RequestRestartMatch();
+
 protected:
 	/** Bind in WBP_HUD (Docs/UI_SPEC.md) to flash a "someone noticed something" cue. */
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")

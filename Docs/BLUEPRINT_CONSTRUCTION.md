@@ -31,6 +31,10 @@ Path: `/Game/Blueprints/Characters/`
     `InteractAction = IA_Interact`.
   - Assign `MicrophoneComponent` nothing extra needed - it self-configures from
     `USHGameInstance::bMicrophoneDetectionEnabled`.
+  - `HealthComponent` also needs no required setup (defaults to 100 HP, 2s stagger, comedic
+    knockback on getting caught by a Resident's chase attack - Section 11/18); tune
+    `KnockbackStrength`/`StaggerDurationSeconds` to taste. Bind its `OnStaggered`/`OnRecovered`
+    events in `WBP_HUD` if you want a visual "you got bumped!" cue.
 
 ## Gameplay Managers (place ONE of each in the map, or let ASHGameMode spawn a fallback)
 Path: `/Game/Blueprints/Gameplay/`

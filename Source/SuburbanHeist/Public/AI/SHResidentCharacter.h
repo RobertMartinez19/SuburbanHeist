@@ -67,6 +67,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Resident")
 	void Server_SetState(EResidentState NewState);
 
+	/** Full reset for a new match (Section 31 acceptance test #18): clears suspicion/target,
+	 *  forces Idle even if already Idle (Server_SetState no-ops on an unchanged state), and
+	 *  teleports back to HomeLocation so a rematch doesn't start with residents scattered
+	 *  wherever they ended up mid-chase. Called by ASHGameMode::Server_RestartMatch. */
+	UFUNCTION(BlueprintCallable, Category = "Resident")
+	void Server_ResetForRematch();
+
 	/** Fictional chase attack (Section 11) - abstract gameplay only, no real weapon simulation. */
 	UFUNCTION(BlueprintCallable, Category = "Resident|Attack")
 	void Server_PerformChaseAttack(AActor* Target);

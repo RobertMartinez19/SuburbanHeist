@@ -59,6 +59,12 @@ public:
 	/** Called by ASHLootManager whenever TeamMoney changes; checks the win condition. */
 	void Server_CheckWinCondition();
 
+	/** Resets money/detection/objectives/residents and starts a fresh countdown (Section 31
+	 *  acceptance test #18 "complete another match"). Wire to the "Play Again" button on
+	 *  WBP_Victory/WBP_Defeat/WBP_PoliceGameOver (Docs/UI_SPEC.md). */
+	UFUNCTION(BlueprintCallable, Category = "Match")
+	void Server_RestartMatch();
+
 	// -- Debug-only hooks (Section 24), exercised via ASHCheatManager --
 	void Debug_GiveMoney(float Amount);
 	void Debug_TriggerDetection();

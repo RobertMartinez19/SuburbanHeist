@@ -9,6 +9,8 @@
 #include "SHPlayerState.h"
 #include "SHPlayerController.h"
 #include "Player/SHPlayerCharacter.h"
+#include "Gameplay/SHObjectivePoint.h"
+#include "AI/SHResidentCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 ASHGameMode::ASHGameMode()
@@ -140,6 +142,49 @@ void ASHGameMode::Server_GameOver_Police()
 
 	GetWorldTimerManager().ClearTimer(MatchTickTimerHandle);
 	EnterPoliceGameOver();
+}
+
+void ASHGameMode::Server_RestartMatch()
+{
+	GetWorldTimerManager().ClearTimer(MatchTickTimerHandle);
+	GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
+
+	if (SHGameState)
+	{
+		SHGameState->TeamMoney = 0.f;
+		SHGameState->OnRep_TeamMoney();
+		SHGameState->UniqueResidentsDetected = 0;
+		SHGameState->OnRep_UniqueResidentsDetected();
+		SHGameState->MatchTimeRemaining = MatchDurationSeconds;
+		SHGameState->OnRep_MatchTimeRemaining();
+	}
+
+	if (DetectionManager)
+	{
+		DetectionManager->Server_ResetAll();
+	}
+
+	TArray<AActor*> Objectives;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASHObjectivePoint::StaticClass(), Objectives);
+	for (AActor* Actor : Objectives)
+	{
+		if (ASHObjectivePoint* Objective = Cast<ASHObjectivePoint>(Actor))
+		{
+			Objective->Server_ResetForRematch();
+		}
+	}
+
+	TArray<AActor*> Residents;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASHResidentCharacter::StaticClass(), Residents);
+	for (AActor* Actor : Residents)
+	{
+		if (ASHResidentCharacter* Resident = Cast<ASHResidentCharacter>(Actor))
+		{
+			Resident->Server_ResetForRematch();
+		}
+	}
+
+	BeginCountdown();
 }
 
 void ASHGameMode::EnterVictory()

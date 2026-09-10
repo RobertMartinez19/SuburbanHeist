@@ -58,6 +58,11 @@ public:
 	/** Section 24 CompleteObjective debug command. */
 	void Debug_ForceComplete();
 
+	/** Re-rolls value and reopens the objective for a new match (Section 31 acceptance test
+	 *  #18 "complete another match"). Called by ASHGameMode::Server_RestartMatch. */
+	UFUNCTION(BlueprintCallable, Category = "Objective")
+	void Server_ResetForRematch();
+
 	// -- ISHInteractableInterface --
 	virtual void Interact_Implementation(ACharacter* Instigator) override;
 	virtual bool CanInteract_Implementation(ACharacter* Instigator) const override;

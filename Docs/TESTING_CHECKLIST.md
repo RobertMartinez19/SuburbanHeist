@@ -37,8 +37,11 @@ Mirrors the Section 31 acceptance test. Run with 2-4 Play-In-Editor clients
       remaining (`ASHLootManager::Server_AwardMoney` -> `ASHGameMode::Server_CheckWinCondition`).
 - [ ] **17b. Timer expires under goal -> Defeat**: `SetTimer 1` with `TeamMoney < GoalMoney`;
       confirm `EGamePhase::Defeat` fires at 0:00.
-- [ ] **18. Replay**: from any end screen, confirm a new match can start (server travel or a
-      simple `ResetDetection` + `SetTimer` + phase reset flow) without restarting the process.
+- [ ] **18. Replay**: from any end screen, click "Play Again" (`ASHPlayerController::
+      Server_RequestRestartMatch` → `ASHGameMode::Server_RestartMatch`); confirm team money,
+      detection count, every `ASHObjectivePoint`, and every `ASHResidentCharacter` (teleported
+      back to `HomeLocation`, suspicion cleared) all reset and a fresh countdown begins for
+      every client, without restarting the process.
 
 ## Multiplayer-specific checks
 - [ ] Kill the server's connection to one client mid-match; confirm remaining clients keep
