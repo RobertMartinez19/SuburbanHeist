@@ -65,9 +65,11 @@ def run():
 		with open(csv_path, "r", encoding="utf-8-sig") as f:
 			csv_text = f.read()
 
-		problems = unreal.DataTableFunctionLibrary.fill_data_table_from_csv_string(data_table, csv_text)
-		if problems:
-			unreal.log_error(f"Problems importing {csv_path} into {full_path}: {problems}")
+		# fill_data_table_from_csv_string returns a bool - True on success - not a list of
+		# problem strings, despite what the variable name below used to imply.
+		success = unreal.DataTableFunctionLibrary.fill_data_table_from_csv_string(data_table, csv_text)
+		if not success:
+			unreal.log_error(f"Failed to populate {full_path} from {csv_path}")
 
 		unreal.EditorAssetLibrary.save_loaded_asset(data_table)
 		unreal.log(f"Imported DataTable {full_path}")
