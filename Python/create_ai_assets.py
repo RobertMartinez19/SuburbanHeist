@@ -57,7 +57,11 @@ def run():
 	)
 
 	if blackboard:
-		existing_names = {entry.get_editor_property("entry_name") for entry in blackboard.get_editor_property("keys")}
+		# str() the entry_name explicitly - it comes back as an FName, and comparing it
+		# directly against the plain `str` values in KEYS silently never matched (found the
+		# hard way: two successful runs each re-appended all 6 keys as duplicates instead of
+		# skipping them).
+		existing_names = {str(entry.get_editor_property("entry_name")) for entry in blackboard.get_editor_property("keys")}
 		keys = list(blackboard.get_editor_property("keys"))
 		for key_name, key_type_short_name in KEYS:
 			if key_name in existing_names:
