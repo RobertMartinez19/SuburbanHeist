@@ -44,20 +44,33 @@ def run():
 			)
 			continue
 
+		# NOTE: unreal.AssetImportTask's generic import pipeline fails to resolve
+		# DataTableFactory for the '.csv' extension on this engine build ("Unknown
+		# extension 'csv'" from LogAssetTools, silently producing no asset even though
+		# import_asset_tasks() doesn't raise). Create the DataTable asset directly and
+		# fill it via DataTableFunctionLibrary instead, which is the reliable path.
 		factory = unreal.DataTableFactory()
 		factory.struct = row_struct
 
-		task = unreal.AssetImportTask()
-		task.filename = csv_path
-		task.destination_path = entry["package_path"]
-		task.destination_name = entry["asset_name"]
-		task.replace_existing = True
-		task.automated = True
-		task.save = True
-		task.factory = factory
+		full_path = f"{entry['package_path']}/{entry['asset_name']}"
+		if unreal.EditorAssetLibrary.does_asset_exist(full_path):
+			unreal.log(f"Asset already exists, skipping: {full_path}")
+			continue
 
-		unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
-		unreal.log(f"Imported DataTable {entry['package_path']}/{entry['asset_name']}")
+		data_table = asset_tools.create_asset(entry["asset_name"], entry["package_path"], unreal.DataTable, factory)
+		if not data_table:
+			unreal.log_error(f"Failed to create DataTable asset at {full_path}")
+			continue
+
+		with open(csv_path, "r", encoding="utf-8-sig") as f:
+			csv_text = f.read()
+
+		problems = unreal.DataTableFunctionLibrary.fill_data_table_from_csv_string(data_table, csv_text)
+		if problems:
+			unreal.log_error(f"Problems importing {csv_path} into {full_path}: {problems}")
+
+		unreal.EditorAssetLibrary.save_loaded_asset(data_table)
+		unreal.log(f"Imported DataTable {full_path}")
 
 
 if __name__ == "__main__":

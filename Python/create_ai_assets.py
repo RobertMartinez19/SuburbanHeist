@@ -65,7 +65,10 @@ def run():
 			entry = unreal.BlackboardEntry()
 			entry.set_editor_property("entry_name", key_name)
 			key_type_class = _bb_key_type_class(key_type_short_name)
-			entry.set_editor_property("key_type", unreal.new_object(key_type_class, outer=entry))
+			# `outer` must be a real UObject - `entry` is a struct (FBlackboardEntry), not one,
+			# so it can't be used here (that raised "Cannot nativize 'BlackboardEntry' as 'Object'").
+			# The blackboard asset itself is a valid, persistent UObject outer.
+			entry.set_editor_property("key_type", unreal.new_object(key_type_class, outer=blackboard))
 			keys.append(entry)
 		blackboard.set_editor_property("keys", keys)
 		unreal.EditorAssetLibrary.save_loaded_asset(blackboard)
