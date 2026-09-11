@@ -66,7 +66,7 @@ void ASHObjectivePoint::OnRep_Completed()
 	OnCompletedLocal.Broadcast();
 }
 
-bool ASHObjectivePoint::CanInteract_Implementation(ACharacter* Instigator) const
+bool ASHObjectivePoint::CanInteract_Implementation(ACharacter* InteractingCharacter) const
 {
 	return !bCompleted;
 }
@@ -91,7 +91,7 @@ float ASHObjectivePoint::GetInteractionDuration_Implementation() const
 	return GetTuning(Row) ? Row.InteractionDurationSeconds : 3.f;
 }
 
-void ASHObjectivePoint::Interact_Implementation(ACharacter* Instigator)
+void ASHObjectivePoint::Interact_Implementation(ACharacter* InteractingCharacter)
 {
 	if (!HasAuthority() || bCompleted)
 	{
@@ -127,7 +127,7 @@ void ASHObjectivePoint::Interact_Implementation(ACharacter* Instigator)
 	{
 		if (ASHLootManager* Loot = Cast<ASHLootManager>(LootManagers[0]))
 		{
-			Loot->Server_NotifyObjectiveCompleted(this, RolledValue, Instigator ? Instigator->GetPlayerState() : nullptr);
+			Loot->Server_NotifyObjectiveCompleted(this, RolledValue, InteractingCharacter ? InteractingCharacter->GetPlayerState() : nullptr);
 		}
 	}
 }

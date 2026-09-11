@@ -5,6 +5,7 @@
 #include "Player/SHHealthComponent.h"
 #include "Gameplay/SHNoiseManager.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"

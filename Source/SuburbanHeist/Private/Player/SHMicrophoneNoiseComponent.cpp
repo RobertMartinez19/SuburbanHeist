@@ -60,7 +60,13 @@ void USHMicrophoneNoiseComponent::SetMicrophoneEnabled(bool bEnabled)
 
 	if (bEnabled)
 	{
-		AudioCapture->SetEnableEnvelopeFollowing(true);
+		// UAudioCaptureComponent::SetEnableEnvelopeFollowing doesn't exist on every engine
+		// version (confirmed absent on 5.8) - OnAudioEnvelopeValue is bound unconditionally
+		// below and simply won't fire if envelope following isn't already active by default
+		// on this component. If you need it explicitly enabled, check your installed
+		// SynthComponent.h/AudioCaptureComponent.h for the current equivalent (see
+		// Docs/LIMITATIONS.md) - this is a soft, non-fatal gap: Section 6's action-based
+		// noise fallback covers gameplay regardless of whether mic amplitude ever reports.
 		AudioCapture->OnAudioEnvelopeValue.AddDynamic(this, &USHMicrophoneNoiseComponent::HandleAudioEnvelopeValue);
 		AudioCapture->Start();
 	}

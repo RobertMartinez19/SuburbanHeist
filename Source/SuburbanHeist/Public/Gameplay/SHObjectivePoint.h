@@ -64,8 +64,10 @@ public:
 	void Server_ResetForRematch();
 
 	// -- ISHInteractableInterface --
-	virtual void Interact_Implementation(ACharacter* Instigator) override;
-	virtual bool CanInteract_Implementation(ACharacter* Instigator) const override;
+	// (Parameter named InteractingCharacter, not Instigator - AActor already has an
+	// Instigator member, and reusing that name on an AActor-derived override shadows it.)
+	virtual void Interact_Implementation(ACharacter* InteractingCharacter) override;
+	virtual bool CanInteract_Implementation(ACharacter* InteractingCharacter) const override;
 	virtual FText GetInteractionPrompt_Implementation() const override;
 	virtual float GetInteractionDuration_Implementation() const override;
 

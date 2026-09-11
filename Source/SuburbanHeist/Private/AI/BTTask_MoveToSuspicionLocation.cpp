@@ -18,11 +18,11 @@ EBTNodeResult::Type UBTTask_MoveToSuspicionLocation::ExecuteTask(UBehaviorTreeCo
 		return EBTNodeResult::Failed;
 	}
 
-	const FPathFollowingRequestResult MoveResult = (bUseTargetActor && Resident->TargetActor.IsValid())
+	const EPathFollowingRequestResult::Type MoveResult = (bUseTargetActor && Resident->TargetActor.IsValid())
 		? AIController->MoveToActor(Resident->TargetActor.Get(), AcceptableRadius)
 		: AIController->MoveToLocation(Resident->LastHeardLocation, AcceptableRadius);
 
-	switch (MoveResult.Code)
+	switch (MoveResult)
 	{
 		case EPathFollowingRequestResult::AlreadyAtGoal:
 			return EBTNodeResult::Succeeded;

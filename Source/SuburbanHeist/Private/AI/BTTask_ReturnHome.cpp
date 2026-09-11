@@ -18,8 +18,8 @@ EBTNodeResult::Type UBTTask_ReturnHome::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-	const FPathFollowingRequestResult MoveResult = AIController->MoveToLocation(Resident->HomeLocation, AcceptableRadius);
-	switch (MoveResult.Code)
+	const EPathFollowingRequestResult::Type MoveResult = AIController->MoveToLocation(Resident->HomeLocation, AcceptableRadius);
+	switch (MoveResult)
 	{
 		case EPathFollowingRequestResult::AlreadyAtGoal:
 			Resident->Server_SetState(EResidentState::Idle);

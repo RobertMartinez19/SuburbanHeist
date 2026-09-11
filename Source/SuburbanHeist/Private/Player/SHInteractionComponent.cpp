@@ -2,6 +2,7 @@
 #include "Interaction/SHInteractableInterface.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/Pawn.h"
 #include "TimerManager.h"
 
 USHInteractionComponent::USHInteractionComponent()
@@ -15,7 +16,8 @@ void USHInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetOwner() && GetOwner()->IsLocallyControlled())
+	const APawn* OwnerPawn = Cast<APawn>(GetOwner());
+	if (OwnerPawn && OwnerPawn->IsLocallyControlled())
 	{
 		GetWorld()->GetTimerManager().SetTimer(TraceTimerHandle, this, &USHInteractionComponent::RefreshFocus, TraceInterval, true);
 	}
