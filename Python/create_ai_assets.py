@@ -16,18 +16,28 @@ BLACKBOARD_NAME = "BB_Resident"
 BEHAVIOR_TREE_PACKAGE = "/Game/AI/BehaviorTrees"
 BEHAVIOR_TREE_NAME = "BT_Resident"
 
-# (KeyName, KeyType) - KeyType is one of the BlackboardKeyType_* classes.
+# (KeyName, KeyType short name) - resolved via unreal.load_class below. The BlackboardKeyType_*
+# classes are not marked BlueprintType, so on UE 5.8 they are NOT exposed as `unreal.BlackboardKeyType_*`
+# module attributes (that raises AttributeError) - they must be loaded by native class path instead.
 KEYS = [
-	("TargetActor", unreal.BlackboardKeyType_Object),
-	("LastHeardLocation", unreal.BlackboardKeyType_Vector),
-	("SuspicionLevel", unreal.BlackboardKeyType_Float),
-	("IsInvestigating", unreal.BlackboardKeyType_Bool),
-	("HasDetectedPlayer", unreal.BlackboardKeyType_Bool),
-	("HomeLocation", unreal.BlackboardKeyType_Vector),
+	("TargetActor", "Object"),
+	("LastHeardLocation", "Vector"),
+	("SuspicionLevel", "Float"),
+	("IsInvestigating", "Bool"),
+	("HasDetectedPlayer", "Bool"),
+	("HomeLocation", "Vector"),
 	# DetectionState (Enum, EResidentState) must be added manually in the Blackboard editor -
 	# UBlackboardKeyType_Enum requires an editor-side enum asset reference that Python's
 	# stable API does not expose a clean setter for; see Docs/BEHAVIOR_TREE_SPEC.md.
 ]
+
+
+def _bb_key_type_class(short_name):
+	class_path = f"/Script/AIModule.BlackboardKeyType_{short_name}"
+	key_type_class = unreal.load_class(None, class_path)
+	if key_type_class is None:
+		raise RuntimeError(f"Could not load class {class_path} - check engine module path for this UE version")
+	return key_type_class
 
 
 def _create_asset(name, package_path, asset_class, factory):
@@ -49,12 +59,13 @@ def run():
 	if blackboard:
 		existing_names = {entry.get_editor_property("entry_name") for entry in blackboard.get_editor_property("keys")}
 		keys = list(blackboard.get_editor_property("keys"))
-		for key_name, key_type_class in KEYS:
+		for key_name, key_type_short_name in KEYS:
 			if key_name in existing_names:
 				continue
 			entry = unreal.BlackboardEntry()
 			entry.set_editor_property("entry_name", key_name)
-			entry.set_editor_property("key_type", key_type_class())
+			key_type_class = _bb_key_type_class(key_type_short_name)
+			entry.set_editor_property("key_type", unreal.new_object(key_type_class, outer=entry))
 			keys.append(entry)
 		blackboard.set_editor_property("keys", keys)
 		unreal.EditorAssetLibrary.save_loaded_asset(blackboard)
